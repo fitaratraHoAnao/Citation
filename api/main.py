@@ -55,7 +55,13 @@ def scrape_citations(author_name):
     rows = soup.find_all('article', class_='node')
     
     for row in rows:
-        quote_text = row.find('p').get_text(strip=True)  # Les citations semblent être dans des <p>
+        # Vérifiez si l'élément <p> existe avant d'essayer d'obtenir du texte
+        p_element = row.find('p')
+        if p_element:  # Si l'élément existe, on récupère le texte
+            quote_text = p_element.get_text(strip=True)
+        else:
+            quote_text = 'Citation non trouvée'
+        
         author_element = row.find('span', class_='author')
         author = author_element.get_text(strip=True) if author_element else 'Auteur inconnu'
         
@@ -66,6 +72,7 @@ def scrape_citations(author_name):
         'author': author_name,
         'citations': citations
     }
+
 
 # Route pour rechercher des articles
 @app.route('/search', methods=['GET'])
